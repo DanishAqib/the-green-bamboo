@@ -117,7 +117,7 @@
                                         <!-- Edit Profile Toggle -->
 
                                         <!-- [if] not editing -->
-                                        <button v-if="!editProfile" type="button" class="btn tertiary-btn rounded-0 reverse-clickable-text" @click="editProfile = true">
+                                        <button v-if="!editProfile" type="button" class="btn tertiary-btn-blue-outline rounded-0 reverse-clickable-text" @click="editProfile = true"> <!--tzh added -blue-outline -->
                                             Edit Profile
                                         </button>
                                         <!-- [else] if editing -->
@@ -284,11 +284,11 @@
                     <!-- Follow Venue -->
                     <div v-if="viewerType == 'user'" class="col-4 no-d-flex justify-content-end mobile-col-5 padding-for-followthisbusinessbutton-large-screen">
                         <div v-if="!userFollowing" class="d-grid gap-2">
-                            <button  class="btn btn-lg primary-btn-less-round mx-1 mobile-view-show fs-6" @click="editFollow('follow')" style="font-weight: bold;" >+ Follow</button>
-                            <button  class="btn btn-lg primary-btn-less-round mx-1 mobile-view-hide" @click="editFollow('follow')" style="font-weight: bold;" >+ Follow Venue</button>
+                            <button  class="btn btn-lg primary-btn-less-round-blue mx-1 mobile-view-show fs-6" @click="editFollow('follow')" style="font-weight: bold;" >+ Follow</button>  <!--tzh added -blue-->
+                            <button  class="btn btn-lg primary-btn-less-round-blue mx-1 mobile-view-hide" @click="editFollow('follow')" style="font-weight: bold;" >+ Follow Venue</button> <!--tzh added -blue-->
                         </div>
                         <div v-else class="d-grid gap-2">
-                            <button class="btn btn-lg primary-btn-outline-less-round mx-1" @click="editFollow('unfollow')" style="font-weight: bold;" >Following</button>
+                            <button class="btn btn-lg primary-btn-less-round-blue mx-1" @click="editFollow('unfollow')" style="font-weight: bold;" >Following</button> <!--tzh changed primary-btn-outline-less-round to primary-btn-less-round-blue -->
                         </div>    
                     </div>
                 </div>
@@ -625,7 +625,7 @@
                                 @click="checkToShowQnA()">Q&As for {{ targetVenue["venueName"] }} ↑</button>
                         <button v-else
                                 type="button" 
-                                class="primary-btn-less-round tertiary-text pt-2 pb-2 border" 
+                                class="primary-btn-less-round-green tertiary-text pt-2 pb-2 border" 
                                 data-bs-toggle="collapse" 
                                 data-bs-target="#collapseQnA" 
                                 aria-expanded="false" 
@@ -636,7 +636,7 @@
                         <div class="collapse pe-0 ps-0" id="collapseQnA">
                             <br>
                                 <div class="col-xl-12 col-lg-4 col-md-6 col-12">
-                                    <div class="square primary-square rounded p-3 mb-3">
+                                    <div class="square primary-square-green rounded p-3 mb-3"> <!--tzh added -green -->
 
                                         <!-- Header -->
                                         <div class="square-inline text-start">
@@ -1939,7 +1939,7 @@
                 <div class="row ">
                     <!--  Q&A-->
                     <div class="col-xl-12 col-lg-4 col-md-6 col-12 mobile-view-hide">
-                        <div class="square primary-square rounded p-3 mb-3">
+                        <div class="square primary-square-green rounded p-3 mb-3"> <!--tzh added -green -->
 
                             <!-- Header -->
                             <div class="square-inline text-start">
@@ -2093,7 +2093,7 @@
                 <!-- Map View -->
                 <!-- <div class="row"> -->
                     <div class="col-xl-12 col-lg-4 col-md-6 col-12">
-                        <div class="square secondary-square rounded p-3 mb-3">
+                        <div class="square primary-square-green-outline rounded p-3 mb-3"> <!--tzh changed secondary-square to primary-square-green-outline-->
 
                             <!-- Header -->
                             <h4 class="text-start"> Venue Location </h4>
@@ -2169,7 +2169,7 @@
                 <!-- Opening Hours + Reservation Details -->
                 <!-- <div class="row"> -->
                     <div class="col-xl-12 col-lg-4 col-md-6 col-12">
-                        <div class="square secondary-square rounded p-3 mb-3">
+                        <div class="square primary-square-green-outline rounded p-3 mb-3"> <!--tzh changed secondary-square to primary-square-green-outline -->
 
                             <!-- Header -->
                             <div class="square-inline text-start">

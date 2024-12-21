@@ -88,7 +88,7 @@
                                         <!-- edit profile -->
                                         <div class="col d-grid no-padding">
                                             <!-- [if] not editing -->
-                                            <button v-if="editing == false" type="button" class="btn tertiary-btn rounded-0 reverse-clickable-text" v-on:click="editProfile()">
+                                            <button v-if="editing == false" type="button" class="btn tertiary-btn-blue-outline rounded-0 reverse-clickable-text" v-on:click="editProfile()">
                                                 Edit Profile
                                             </button>
                                             <!-- [else] if editing -->
@@ -182,8 +182,8 @@
                     <!-- follow this business -->
                     <div class="col-5 justify-content-end padding-for-followthisbusinessbutton-large-screen" v-if="userType == 'user'" >
                             <div v-if="!following" class="d-grid gap-2">
-                                <button class="btn primary-btn-less-round btn-lg mobile-view-show fs-6" @click="editFollow('follow')" style="font-weight:bold;" >+ Follow</button>
-                                <button class="btn primary-btn-less-round btn-lg mobile-view-hide" @click="editFollow('follow')" style="font-weight:bold;" > 
+                                <button class="btn primary-btn-less-round-blue btn-lg mobile-view-show fs-6" @click="editFollow('follow')" style="font-weight:bold;" >+ Follow</button> <!--tzh added -blue -->
+                                <button class="btn primary-btn-less-round-blue btn-lg mobile-view-hide" @click="editFollow('follow')" style="font-weight:bold;" >  <!--tzh added -blue -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 20">
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                     </svg>
@@ -191,7 +191,7 @@
                                 </button>
                             </div>
                             <div v-else class="d-grid gap-2">
-                                <button class="btn primary-btn-outline-less-round btn-lg" @click="editFollow('unfollow')"> 
+                                <button class="btn primary-btn-less-round-blue btn-lg" @click="editFollow('unfollow')" style="font-weight: bold;">  <!--tzh changed primary-btn-outline-less-round to primary-btn-less-round-blue -->
                                     Following
                                 </button>
                             </div>
@@ -494,7 +494,7 @@
                             @click="checkToShowQnA()">Q&As for {{ specified_producer["producerName"] }} ↑</button>
                         <button v-else
                             type="button" 
-                            class="primary-btn-less-round tertiary-text pt-2 pb-2 border" 
+                            class="primary-btn-less-round-green tertiary-text pt-2 pb-2 border" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#collapseQnA" 
                             aria-expanded="false" 
@@ -506,7 +506,7 @@
                     <!-- q&a -->
                         <br>
                             <div class="col-xl-12 col-lg-4 col-md-6 col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green rounded p-3 mb-3"> <!--tzh added -green-->
                                     <!-- header text -->
                                     <div class="square-inline text-start">
                                         <!-- [if] user type producer -->
@@ -1093,7 +1093,7 @@
                     </div>
                     <!-- q&a -->
                     <div class="col-xl-12 col-lg-4 col-md-6 col-12 mobile-view-hide">
-                        <div class="square primary-square rounded p-3 mb-3">
+                        <div class="square primary-square-green rounded p-3 mb-3"> <!--tzh added -green -->
                             <!-- header text -->
                             <div class="square-inline text-start">
                                 <!-- [if] user type producer -->
@@ -1238,7 +1238,7 @@
                     </div>
                     <!-- 88 bamboo's deepdive -->
                     <div class="col-xl-12 col-lg-4 col-md-6 col-12 mobile-view-hide">
-                        <div class="square secondary-square rounded p-3 mb-3">
+                        <div class="square primary-square-green-outline rounded p-3 mb-3"> <!--tzh changed secondary-square to primary-square-green-outline -->
                             <!-- header text -->
                             <div class="py-2 text-start">
                                 <h4> 88 Bamboo's Review </h4>

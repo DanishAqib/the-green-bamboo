@@ -2,7 +2,7 @@
 
 body {
     color: black;
-    background-color: #F2F2F2 !important;
+    background-color: white !important;   /* tzh changed F2F2F2 to white */
     overflow: overlay;
 }
 
@@ -24,7 +24,7 @@ body {
     top: 0;
     left: 0;
     width: 100%; 
-    background-color: #F2F2F2;
+    background-color: white; /* tzh changed F2F2F2 to white */
     z-index: 99;
 }
 
@@ -33,7 +33,7 @@ body {
 }
 
 .navbar-dropdown {
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .default-text {
@@ -63,7 +63,7 @@ body {
 }
 
 .primary-clickable-text {
-    color: #535C72;
+    color: black; /* TZH changed 535C72 to black*/
     text-decoration: none;
 }
 
@@ -83,20 +83,55 @@ body {
 
 .primary-btn, 
 .primary-btn-outline:hover {
-    color: whitesmoke;
-    background-color: #535C72;
+    color: black;    /*TZH changed whitesmoke to black*/
+    background-color: #F0B258; /*TZH changed 535C72 to F0B258 */ 
     border-radius: 30px;
-    border: 4px solid #535C72;
+    border: 4px solid #F0B258; /*TZH changed 535C72 to F0B258 */ 
 }
 
 .primary-btn-outline, 
 .primary-btn:hover {
-    color: #535C72;
-    background-color: whitesmoke;
+    color: black;  /*TZH changed 535C72 to black */ 
+    background-color: #c9964a; /*TZH changed whitesmoke to c9964a */ 
     border-radius: 30px;
-    border: 4px solid #535C72;
+    border: 4px solid #F0B258; /*TZH changed 535C72 to c9964a */ 
 }
 
+.primary-btn-green, 
+.primary-btn-green-outline:hover {
+    color: white;    
+    background-color: #027562; /*TZH added for Discovery and Following buttons on homepage */ 
+    border-radius: 30px;
+    border: 4px solid #027562; /*TZH changed 535C72 to F0B258 */ 
+}
+
+.primary-btn-green:hover{
+    color: white;    
+    background-color: #026453; 
+    border-radius: 30px;
+    border: 4px solid #026453; 
+}
+
+.primary-btn-green-outline{
+    color: #027562; 
+    background-color: white;  
+    border-radius: 30px;
+    border: 4px solid #027562;  
+}
+
+.primary-btn-green-thin-outline{
+    color: #027562; 
+    background-color: white;  /*TZH added for Reviews and Drinks List buttons on user profile */ 
+    border-radius: 30px;
+    border: 2px solid #027562;  
+}
+
+.primary-btn-green-thin-outline:hover {
+    color: white;    
+    background-color: #027562; 
+    border-radius: 30px;
+    border: 2px solid #027562; 
+}
 .primary-btn-less-round,
 .primary-btn-outline-less-round:hover {
     color: whitesmoke;
@@ -105,6 +140,28 @@ body {
     border: 4px solid #535C72;
 }
 
+.primary-btn-less-round-blue {
+    color: white;
+    background-color: #83A9E8;
+    border-radius: 10px;
+}
+.primary-btn-less-round-blue:hover{
+    color: white;
+    background-color: #6183ba;
+    border-radius: 10px;
+}
+
+
+.primary-btn-less-round-green {
+    color: white;
+    background-color: #027562;
+    border-radius: 10px;
+}
+.primary-btn-less-round-green:hover{
+    color: white;
+    background-color: #02594b;
+    border-radius: 10px;
+}
 .primary-btn-less-round:hover,
 .primary-btn-outline-less-round {
     color: #535C72;
@@ -121,8 +178,8 @@ body {
 }
 
 .primary-square {
-    color: whitesmoke;
-    background-color: #495264; /* color changed by TZH */
+    color: black; /*tzh changed whitesmoke to black*/
+    background-color:#F0B258; /* color changed by TZH from #495264 to #F0B258 */
 }
 
 .primary-square-btn {
@@ -134,6 +191,30 @@ body {
     color: whitesmoke;
     background-color: #535C72;
 }
+
+.primary-square-green {
+    color: whitesmoke;
+    background-color:#027562; /* added by tzh for left side bar on homepage */
+}
+
+.primary-square-green-outline {
+    color: black; 
+    background-color: white;  /* added by tzh for left side bar on homepage*/
+    border-radius: 30px;
+    border: 4px solid #027562;  
+}
+
+
+.primary-square-btn-green {
+    color: whitesmoke;
+    background-color:#027562; /* added by tzh for submit action buttons */
+}
+
+.primary-square-btn-green:hover {
+    color: whitesmoke;
+    background-color:#02594b; /* added by tzh for submit action buttons */
+}
+
 
 .primary-light-dropdown {
     color: whitesmoke;
@@ -176,27 +257,39 @@ body {
 }
 
 .secondary-btn {
-    color: whitesmoke;
-    background-color: #DD9E54;
+    color: black; /* TZH changed whitesmoke to black*/
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
     border-radius: 30px;
 }
 
 .secondary-btn:hover {
-    color: whitesmoke;
-    background-color: #c07c2d;
+    color: black; /* TZH changed whitesmoke to black*/
+    background-color: #C9964A; /* TZH changed c07c2d to C9964A */
+    border-radius: 30px;
+}
+
+.secondary-btn-blue {
+    color: white; 
+    background-color: #83A9E8; /* TZH added for pending listing requests section */
+    border-radius: 30px;
+}
+
+.secondary-btn-blue:hover {
+    color: white;
+    background-color: #6183ba;
     border-radius: 30px;
 }
 
 .secondary-btn-border {
     color: whitesmoke;
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
     border-radius: 30px;
     border: 1px solid whitesmoke;
 }
 
 .secondary-btn-border:hover {
     color: whitesmoke;
-    background-color: #c27e30;
+    background-color: #C9964A; /* TZH changed c27e30 to C9964A */
     border-radius: 30px;
     border: 1px solid whitesmoke;
 }
@@ -220,9 +313,9 @@ body {
 .secondary-btn-less-round,
 .secondary-btn-outline-less-round:hover {
     color: black;
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
     border-radius: 10px;
-    border: 4px solid #DD9E54;
+    border: 4px solid #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .secondary-btn-less-round:hover,
@@ -230,17 +323,17 @@ body {
     color: black;
     background-color: whitesmoke;
     border-radius: 10px;
-    border: 4px solid #DD9E54;
+    border: 4px solid #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .secondary-btn-not-rounded {
     color: black;
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .secondary-btn-not-rounded:hover {
     color: black;
-    background-color: #c27e30;
+    background-color: #C9964A; /* TZH changed c07c2d to C9964A */
 }
 
 .secondary-square {
@@ -251,7 +344,7 @@ body {
 
 .secondary-square-btn {
     color: whitesmoke;
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .secondary-square-btn:hover {
@@ -264,6 +357,17 @@ body {
     color: whitesmoke;
     background-color: #747D92;
     border: 1px solid rgb(110, 110, 110);
+}
+
+.tertiary-btn-blue-outline{
+    font-weight: bold;
+    color: #83A9E8; 
+    background-color: white; /*tzh added for edit profile button*/
+    border: 3px solid #83A9E8;
+}
+.tertiary-btn-blue-outline:hover{
+    color: whitesmoke;
+    background-color: #83A9E8;
 }
 
 .tertiary-btn:hover {
@@ -301,13 +405,15 @@ body {
 }
 
 .custom-drink-list-btn {
-    background-color: rgb(245, 232, 158);
-    border: 1px solid rgb(110, 110, 110);
+    background-color: #83A9E8; /*tzh changed rgb(245, 232, 158) to 83A9E8 */
+    border: 1px solid white;  /*tzh changed rgb(110, 110, 110) to white */
+    color: white;  /*tzh added */
 }
 
 .custom-drink-list-btn:hover {
-    background-color: rgb(238, 214, 80);
-    border: 1px solid black;
+    background-color: #6183ba; /*tzh changed  rgb(238, 214, 80) to 6183ba */
+    border: 1px solid white;  /*tzh changed black to white */
+    color: white;  /*tzh added */
 }
 
 .btn-outline {
@@ -333,7 +439,7 @@ body {
 }
 
 .img-border {
-    border: 2.5px solid #868fa7;
+    border: 2.5px solid #83A9E8;  /* tzh changed 868fa7 to #83A9E8*/
     border-radius: 30px;
 }
 
@@ -451,12 +557,16 @@ body {
 }
 
 .rating-text, .bi-star-fill {
-    color: #DD9E54;
+    color: #F0B358; /*TZH changed DD9E54 to F0B358 */
+}
+
+.bi-star-fill-black {
+    color: black;  /*TZH added this for producer's bottle listings */
 }
 
 .title-card-text {
     font-weight: bold;
-    color: #DD9E54;
+    color: #83A9E8;  /*TZH changed DD9E54 to 83A9E8 */
 }
 
 .scrollable {
@@ -610,7 +720,7 @@ body {
     height: 30px;
     border-radius: 50%;
     color: whitesmoke;
-    background-color: #DD9E54;
+    background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
 }
 
 .rounded-circle-no-results {
@@ -642,7 +752,7 @@ body {
         height: 25px;
         border-radius: 50%;
         color: whitesmoke;
-        background-color: #DD9E54;
+        background-color: #F0B358; /* TZH changed DD9E54 to F0B358*/
     }
 
     .rounded-circle-no-results {
@@ -731,13 +841,13 @@ button.primary-square:hover {
     background-color: #6d768d;
 }
 
-button.primary-btn{
+/* button.primary-btn{
     background-color: #495264 !important;
-}
+} */
 
-button.primary-btn:hover{
+/* button.primary-btn:hover{
     background-color: #909cba !important;
-}
+} */
 
 .btn-secondary {
     color: whitesmoke;
@@ -770,7 +880,7 @@ button.primary-btn:hover{
 
 .btn-warning {
     color: black !important;
-    background-color: #FBBA49 !important;
+    background-color: #F0B358 !important; /* TZH changed FBBA49 to F0B358*/
 }
 .btn-warning:hover {
     color: black !important;
@@ -829,22 +939,24 @@ button.primary-btn:hover{
     border-radius: 0px !important;
     font-weight: bold !important;
 }
-
-.active-toggle-button-user-profile {
-    color: #495264  !important; /* Active state text color */
-    background-color: #F2F2F2 !important; /* Active state background color */
-    border-bottom: 3px solid #495264 !important; /* Underline for active tab */
+/*
+ .active-toggle-button-user-profile {
+    color: #495264  !important;  Active state text color 
+    background-color: #F2F2F2 !important;  Active state background color 
+    border-bottom: 3px solid #495264 !important; Underline for active tab 
     border-radius: 0px !important;
     font-weight: bold !important;
   
-}
-.inactive-toggle-button-user-profile {
-    color: black  !important; /* Active state text color */
-    background-color: #F2F2F2 !important; /* Active state background color */
-    border: none !important; /* Underline for active tab */
+} 
+*/
+
+/* .inactive-toggle-button-user-profile {
+    color: black  !important;  Active state text color 
+    background-color: #F2F2F2 !important;  Active state background color 
+    border: none !important;  Underline for active tab 
     border-radius: 0px !important;
     font-weight: bold !important;
-}
+}  */
 
 .navbar-toggler-icon {
     min-width: 2.0em;
@@ -1019,7 +1131,7 @@ button.primary-btn:hover{
 }
 .primary-light-dropdown-homepage {
     color: whitesmoke;
-    background-color: #747D92;
+    background-color: #83A9E8;  /* TZH changed 747D92 to 83A9E8 */
     border-radius: 10px;
 }
 
@@ -1027,7 +1139,7 @@ button.primary-btn:hover{
 .primary-light-dropdown-homepage:focus,
 .primary-light-dropdown-homepage:active {
     color: whitesmoke;
-    background-color: #535C72;
+    background-color: #6183ba;  /* TZH changed 535C72 to 83A9E8 */
     border-radius: 10px;
 }
 
@@ -1150,10 +1262,10 @@ button.primary-btn:hover{
 
 
 @media (max-width: 991px){
-    .primary-btn.mobile-convert-to-toggle-button {
-        color: #495264  !important; /* Active state text color */
-        background-color: #F2F2F2 !important; /* Active state background color */
-        border-bottom: 3px solid #495264 !important; /* Underline for active tab */
+    .primary-btn-green.mobile-convert-to-toggle-button {
+        color: #027562  !important; /* Active state text color */
+        background-color: white !important; /* Active state background color */
+        border-bottom: 3px solid #027562 !important; /* Underline for active tab */
         border-left: none;
         border-right: none;
         border-top: none;
@@ -1164,13 +1276,13 @@ button.primary-btn:hover{
 }
 
 @media (max-width: 991px){
-    .primary-btn-outline.mobile-convert-to-toggle-button {
-        color: black  !important; /* Active state text color */
-        background-color: #F2F2F2 !important; /* Active state background color */
+    .primary-btn-green-outline.mobile-convert-to-toggle-button {
+        color: rgba(0, 0, 0, 0.514)  !important; /* Active state text color */
+        background-color: white !important; /* Active state background color */
         border: none !important; /* Underline for active tab */
         border-radius: 0px !important;
         font-weight: bold !important;
-        border-bottom: 1px outset #495264 !important;
+        border-bottom: 1px outset rgba(0, 0, 0, 0.514) !important;
         text-align:left;
 }
 }
@@ -1506,7 +1618,7 @@ button.primary-btn:hover{
 
 @media (max-width: 991px){
     .mobile-toggle-button-producer-profile{
-        background-color: #F2F2F2 !important;
+        background-color: white !important;
     }
 }
 
@@ -1640,3 +1752,46 @@ button.primary-btn:hover{
 }
 }
 
+.text-body-secondary {
+    color:black !important;
+}
+
+.text-color-black {
+    color:black !important;
+}
+
+@media (max-width: 991px){
+    .active-toggle-button-user-profile {
+        color: #027562  !important; /* Active state text color */
+        background-color: white !important; /* Active state background color */
+        border-bottom: 3px solid #027562 !important; /* Underline for active tab */
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-radius: 0px !important;
+        font-weight: bold !important;
+        text-align:left;
+}
+}
+
+@media (max-width: 991px){
+    .inactive-toggle-button-user-profile {
+        color: rgba(0, 0, 0, 0.514)  !important; /* Active state text color */
+        background-color: white !important; /* Active state background color */
+        border: none !important; /* Underline for active tab */
+        border-radius: 0px !important;
+        font-weight: bold !important;
+        border-bottom: 1px outset rgba(0, 0, 0, 0.514) !important;
+        text-align:left;
+}
+}
+@media (max-width: 991px){
+.no-hover:hover {
+    background-color: inherit; /* Keeps the original background color */
+    color: inherit;           /* Keeps the original text color */
+    border-bottom: inherit; /* Underline for active tab */
+    border-left: inherit;
+    border-right: inherit;
+    border-top: inherit;
+}
+}

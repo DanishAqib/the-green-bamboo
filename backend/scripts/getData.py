@@ -1,6 +1,6 @@
 # Port: 5000
 # Routes: /getAccountRequests (GET), /getCountries (GET), /getListings (GET), /getListing/<id> (GET), /getProducers (GET), /getProducer/<id> (GET),
-#           /getReviews (GET), /getReviewByTarget/<id> (GET), /getUsers (GET), /getUser/<id> (GET), /getUserByUsername/<username> (GET), /getVenues (GET), 
+#           /getReviews (GET), /getReviewByTarget/<id> (GET), /getReviewsByUserIds (GET), /getUsers (GET), /getUser/<id> (GET), /getUserByUsername/<username> (GET), /getVenues (GET), 
 #           /getVenue/<id> (GET), /getVenuesAPI (GET), /getDrinkTypes (GET), /getRequestListings (GET), /getRequestListing/<id> (GET), /getRequestEdits (GET), 
 #           /getRequestEdit/<id> (GET), /getModRequests (GET), /getFlavourTags (GET), /getSubTags (GET), /getObservationTags (GET), /getColours (GET), 
 #           /getSpecialColours (GET), /getLanguages (GET), /getServingTypes (GET), /getProducersProfileViews (GET), /getVenuesProfileViewsByVenue/<id> (GET), /getRequestInaccuracyByVenue/<id> (GET)
@@ -534,6 +534,69 @@ def getReviewByTarget(id):
         return jsonify([])
 
     return jsonify(reviews_data)
+
+
+# [GET] Latest 10 Specific Reviews by usr(s) - using one or more user IDs (retrieve latest reviews for the specified user(s) as well as the review target(s) data)
+@blueprint.route("/getReviewsByUserIds")
+def getReviewsByUserIds():
+
+    user_ids_str = request.args.get('user_ids')
+    user_ids = user_ids_str.split(',')
+    conn = g.db
+    
+    with conn.cursor() as cursor:
+        # Fetch latest reviews for the specified user(s)
+        cursor.execute('''
+            WITH latest_reviews AS (
+                SELECT "reviewDesc", "rating", "reviewTarget", "createdDate", "userID"
+                FROM "reviews"
+                WHERE "userID" IN %s
+                ORDER BY "createdDate" DESC
+                LIMIT 10
+            )
+            SELECT "reviewDesc", "rating", "reviewTarget", "createdDate", "userID"
+            FROM latest_reviews
+            ORDER BY "createdDate" DESC;
+        ''', (tuple(user_ids),))
+        latest_reviews = cursor.fetchall()
+
+        # Retrieve the display name(s) for each user
+        cursor.execute('SELECT "id", "displayName", "photo" FROM "users" WHERE "id" IN %s', (tuple(user_ids),))
+        user_display_names = cursor.fetchall()
+
+        # Convert the user display names to dictionary format where the key is the user ID
+        user_display_names = {user['id']: user for user in user_display_names}
+
+        # Retrieve the review target(s) for each review
+        review_target_list = []
+        for review in latest_reviews:
+            review = dict(review)
+            if (review['reviewTarget'] not in review_target_list):
+                review_target_list.append(review['reviewTarget'])
+        
+        # Fetch the review target(s) data
+        cursor.execute('SELECT "id", "listingName", "photo" FROM "listings" WHERE "id" IN %s', (tuple(review_target_list),))
+        review_targets_data = cursor.fetchall()
+
+        # Map the review target data to the reviews
+        for review in latest_reviews:
+            review['userInfo'] = user_display_names[review['userID']]
+            review['reviewTarget'] = next((item for item in review_targets_data if item["id"] == review['reviewTarget']), None)
+        
+        # Convert the reviews to JSON format
+        latest_reviews = parse_json(latest_reviews)
+    
+    if not latest_reviews:
+        return jsonify({
+            'code': 404,
+            'message': 'No reviews found for the specified user(s).'
+        })
+
+    return jsonify({
+        'code': 200,
+        'message': 'Latest reviews fetched successfully.',
+        'data': latest_reviews
+    })
 
 # ----------------------
 # [NEW] TO BE ADDED:

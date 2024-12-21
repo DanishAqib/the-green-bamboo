@@ -83,7 +83,7 @@
                         <p class="fw-bold fs-1" v-if="formMode == 'dup'">Report Duplicate Bottle Listing</p>
                     </div>
                     <div v-if="formType == 'power'">
-                        <p class="fw-bold fs-1" v-if="formMode == 'new'">Create New Bottle Listing</p>
+                        <p class="fw-bold fs-1" v-if="formMode == 'new'">Create New Bottle Listing</p> 
                         <p class="fw-bold fs-1" v-if="formMode == 'edit'">Edit Bottle Listing</p>
                     </div>
                 </div>
@@ -353,17 +353,18 @@
                     <!-- Submission Buttons -->
                     <div v-if="formType == 'req'">
                         <button type="button" class="btn btn-secondary mx-1 mb-3" @click="goBack">Return</button>
-                        <button type="submit" class="btn primary-square mx-1 mb-3" v-if="formMode == 'new'">Submit Listing Request</button>
-                        <button type="submit" class="btn primary-square mx-1 mb-3" v-if="formMode == 'edit'">Submit Edit Request</button>
-                        <button type="submit" class="btn primary-square mx-1 mb-3" v-if="formMode == 'dup'">Submit Duplicate Report</button>
+                        <button type="submit" class="btn primary-square-btn-green mx-1 mb-3" v-if="formMode == 'new'">Submit Listing Request</button>  <!--tzh added -green-->
+                        <button type="submit" class="btn primary-square-btn-green mx-1 mb-3" v-if="formMode == 'edit'">Submit Edit Request</button> <!--tzh added -green-->
+                        <button type="submit" class="btn primary-square-btn-green mx-1 mb-3" v-if="formMode == 'dup'">Submit Duplicate Report</button> <!--tzh added -green-->
                         
                     </div>
                     <div v-if="formType == 'power'">
-                        <button type="submit" class="btn secondary-btn mx-1 mb-3" v-if="formMode == 'new'">Create New Listing</button>
-                        <button type="submit" class="btn secondary-btn mx-1 mb-3" v-if="formMode == 'edit'">Save Listing Edits</button>
+                        <button type="button" class="btn btn-secondary mx-1 mb-3" @click="goBack">Return</button>
+                        <button type="submit" class="btn primary-square-btn-green mx-1 mb-3" v-if="formMode == 'new'">Create New Listing</button>  <!--tzh changed secondary-btn to primary-square-btn-green-->
+                        <button type="submit" class="btn primary-square-btn-green mx-1 mb-3" v-if="formMode == 'edit'">Save Listing Edits</button> <!--tzh changed secondary-btn to primary-square-btn-green-->
 
                         <button type="button" class="btn btn-danger rounded-pill mx-1 mb-3" v-if="prevListing" @click="updateRequestStatus('reject')">Reject Request</button>
-                        <button type="button" class="btn primary-btn mx-1 mb-3" @click="goBack">Return</button>
+                        
                     </div>
                 
                 </form>

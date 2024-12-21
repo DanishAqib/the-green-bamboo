@@ -138,7 +138,7 @@
                         @click="checkToShowFollowerActivity()">Follower Activity ↑</button>
                         <button v-else
                         type="button" 
-                        class="primary-btn-less-round tertiary-text pt-2 pb-2 border" 
+                        class="primary-btn-less-round-green tertiary-text pt-2 pb-2 border" 
                         data-bs-toggle="collapse" 
                         data-bs-target="#collapseFollowerActivity" 
                         aria-expanded="false" 
@@ -185,7 +185,7 @@
                     </div>
                     <!-- row 3: recent activity from followers desktop -->
                     <div class="row pt-3 mobile-view-hide">
-                        <div class="square primary-square rounded p-3 mb-3 text-start">
+                        <div class="square primary-square-green rounded p-3 mb-3 text-start">
                             <!-- header text -->
                             <div class="square-inline pb-2">
                                 <h4 class="square-inline text-start mr-auto"> Recent Activity from Your Followers </h4>
@@ -235,7 +235,7 @@
                         @click="checkToShowReviewActivity()">Activity On Your Reviews ↑</button>
                         <button v-else
                         type="button" 
-                        class="primary-btn-less-round tertiary-text pt-2 pb-2 border" 
+                        class="primary-btn-less-round-green tertiary-text pt-2 pb-2 border" 
                         data-bs-toggle="collapse" 
                         data-bs-target="#collapseReviewActivity" 
                         aria-expanded="false" 
@@ -280,7 +280,7 @@
 
                     <!-- row 4: recent activity on reviews desktop -->
                     <div class="row pt-3 mobile-view-hide">
-                        <div class="square primary-square rounded p-3 mb-3 text-start">
+                        <div class="square primary-square-green rounded p-3 mb-3 text-start">
                             <!-- header text -->
                             <div class="square-inline pb-2">
                                 <h4 class="square-inline text-start mr-auto"> Recent Activity on Your Reviews </h4>

@@ -173,7 +173,7 @@
                                             <div class="col-sm-12 col-md-9 col-lg-3 ">
                                                 <!-- where to buy -->
                                                 <div class="row">
-                                                    <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 250px;">
+                                                    <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 250px;"> <!-- TZH added '-green'-->
                                                         <!-- header text -->
                                                         <div class="square-inline text-start">
                                                             <h4 class="mr-auto"> Where to Buy </h4>
@@ -197,7 +197,7 @@
                                             
                                                 <!-- where to try -->
                                                 <div class="row">
-                                                    <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 250px;">
+                                                    <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 250px;">  <!-- TZH added '-green'-->
                                                         <!-- header text -->
                                                         <div class="square-inline text-start">
                                                             <h4 class="mr-auto"> Where to Try </h4>
@@ -242,7 +242,7 @@
                                                 
                                                 <!-- 88 bamboo's review -->
                                                 <div class="row">
-                                                    <div class="square secondary-square rounded p-3 mb-3">
+                                                    <div class="square primary-square-green-outline xsecondary-square rounded p-3 mb-3">  <!-- TZH added 'primary-square-green-outline'-->
                                                         <!-- header text -->
                                                         <div class="py-2 text-start">
                                                             <h4> 88 Bamboo's Review </h4>
@@ -324,7 +324,7 @@
                                     </p>    
                                 </div>
                 </div>
-                <div class="row pt-2 container mobile-view-show">
+                <div class="row pt-2 container mobile-view-show text-black">
                 <p class="text-start mb-1 col-10" style="white-space: nowrap; overflow:hidden;text-overflow: ellipsis; font-size:15px; font-weight:bold;">
                                                         <span v-if="specified_listing.drinkType === 'Whiskey / Whisky'">
                                                             <span style="color: #2c3e50;" class="text-decoration-none">Whisky | </span>
@@ -349,13 +349,13 @@
                     <div class="col-7 col-lg-7">
                         <div class="row">
                             <!-- category -->
-                            <div class="col-6 col-lg-3 text-start mobile-view-hide">
+                            <div class="col-6 col-lg-3 text-start mobile-view-hide text-color-black">
                                 <h5 class="text-body-secondary" style="margin-bottom:0;"> <b> {{ specified_listing["typeCategory"] }} </b> </h5>
                                 <p class="mb-2"> <u> Category </u> </p>
                                 
                             </div>
                             <!-- age --> 
-                            <div class="col-6 col-lg-3 text-start mobile-view-hide">
+                            <div class="col-6 col-lg-3 text-start mobile-view-hide text-color-black">
                                 <!-- for wine listings -->
                                 <div v-if="specified_listing['drinkType'] == 'Wine'">
                                     <h5 class="text-body-secondary" style="margin-bottom:0;"> <b>  {{ specified_listing["age"] }} </b> </h5>
@@ -370,13 +370,13 @@
                                 </div>
                             </div>
                             <!-- country of origin -->
-                            <div class="col-6 col-lg-4 text-start mobile-view-hide">
+                            <div class="col-6 col-lg-4 text-start mobile-view-hide text-color-black">
                                 <h5 class="text-body-secondary" style="margin-bottom:0;"> <b> {{ specified_listing["originCountry"] }} </b> </h5>
                                 <p class="mb-2"> <u> Country of Origin </u> </p>
                                 
                             </div>
                             <!-- abv -->
-                            <div class="col-6 col-lg-2 text-start mobile-view-hide">
+                            <div class="col-6 col-lg-2 text-start mobile-view-hide text-color-black">
                                 <h5 class="text-body-secondary" style="margin-bottom:0;"> <b> {{ specified_listing["abv"] }} </b> </h5>
                                 <p class="mb-1"> <u> ABV </u> </p>
                                 
@@ -416,11 +416,11 @@
                     <div class="col-12 col-lg-7">
                         <div class="row">
                             <!-- average rating -->
-                            <div class="col-4 text-start mobile-col-3 mobile-pe-0 ">
+                            <div class="col-4 text-start mobile-col-3 mobile-pe-0 text-color-black">
                                 
                                 <h3 class="mobile-rating-smaller-text text-body-secondary rating-text" style="margin-bottom:0;"> 
                                     <b>{{ specificReviewRating }}</b>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="1em" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="1em" fill="currentColor" class="bi bi-star-fill-black" viewBox="0 0 16 16">
                                         <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
                                     </svg>
                                 </h3>
@@ -428,13 +428,13 @@
                                 <p class="mb-2 mobile-view-show mobile-rating-smaller-text-2"> <u> Rating </u> </p>
                             </div>
                             <!-- would recommend -->
-                            <div class="col-4 text-start mobile-col-3 mobile-ps-0 mobile-pe-0 ">
+                            <div class="col-4 text-start mobile-col-3 mobile-ps-0 mobile-pe-0 text-color-black">
                                 <h3 class="mobile-rating-smaller-text text-body-secondary rating-text" style="margin-bottom:0;"> <b> {{ willRecommend }}% </b> </h3>
                                 <p class="mb-2 mobile-rating-smaller-text-2"> <u> Would Recommend </u> </p>
                                 
                             </div>
                             <!-- would drink again -->
-                            <div class="col-4 text-start mobile-col-3 mobile-ps-0 ">
+                            <div class="col-4 text-start mobile-col-3 mobile-ps-0 text-color-black">
                                     <h3 class="mobile-rating-smaller-text text-body-secondary rating-text" style="margin-bottom:0;"> <b> {{ willDrinkAgain }}% </b> </h3>
                                     <p class="mb-2 mobile-rating-smaller-text-2"> <u> Would Drink Again </u> </p>
                                     
@@ -442,14 +442,14 @@
                             <div class="mobile-col-3 mobile-view-show">
                                             <div v-if="userType == 'user' && userID !== 'defaultUser'" class="padding-for-addyourreviewbutton-large-screen mobile-view-show">
                                                 <div v-if="!inEdit" class="d-grid gap-2">
-                                                    <button class="btn primary-btn-less-round btn-lg" data-bs-toggle="modal" data-bs-target="#reviewModal" style="font-weight:bold;"> 
+                                                    <button class="btn primary-btn-less-round-blue btn-lg" data-bs-toggle="modal" data-bs-target="#reviewModal" style="font-weight:bold;">  <!--tzh added -blue -->
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                                         </svg>
                                                     </button>
                                                 </div>
                                                 <div v-else class="d-grid gap-2">
-                                                    <button class="btn primary-btn-less-round btn-lg mobile-rating-smaller-text-2"> 
+                                                    <button class="btn primary-btn-less-round-blue btn-lg mobile-rating-smaller-text-2">   <!--tzh added -blue -->
                                                         Review added
                                                     </button>
                                                 </div>
@@ -457,7 +457,7 @@
                                             <div v-else-if="userType == 'user'" class="col-5 mobile-view-hide">
                                                 <div class="d-grid gap-2">
                                                     <router-link :to="{ path: '/login' }" class="reverse-clickable-text">
-                                                        <button class="btn primary-btn-less-round btn-lg mobile-rating-smaller-text-2"> 
+                                                        <button class="btn primary-btn-less-round-blue btn-lg mobile-rating-smaller-text-2">   <!--tzh added -blue -->
                                                             Login to leave Review
                                                         </button>
 
@@ -522,7 +522,7 @@
                     <!-- Display Add review or Review already added accordingly to whether user already left review -->
                     <div v-if="userType == 'user' && userID !== 'defaultUser'" class="col-5 padding-for-addyourreviewbutton-large-screen mobile-view-hide">
                         <div v-if="!inEdit" class="d-grid gap-2">
-                            <button class="btn primary-btn-less-round btn-lg" data-bs-toggle="modal" data-bs-target="#reviewModal" style="font-weight:bold;"> 
+                            <button class="btn primary-btn-less-round-blue btn-lg" data-bs-toggle="modal" data-bs-target="#reviewModal" style="font-weight:bold;"> 
                                 <!---<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                 </svg>-->
@@ -550,7 +550,7 @@
 
                 <!-- popular flavorTag -->
                 <div class="row pt-3 mobile-pt-2 container">
-                    <div class="text-start mb-2 mobile-mb-0">
+                    <div class="text-start mb-2 mobile-mb-0 text-color-black">
                         
                         <!-- flavor tag -->
                         <span v-for="(count, tag) in sorted_flavorTagCounts" :key="tag" class="badge rounded-pill me-2" :style="{ backgroundColor: '#' + tag.split('#')[1] }">{{ tag.split('#')[0] }}</span>
@@ -560,7 +560,7 @@
 
                 <!-- popular observationTag -->
                 <div class="row pt-3 container mobile-pt-2">
-                    <div class="text-start mb-2 mobile-mb-0">
+                    <div class="text-start mb-2 mobile-mb-0 text-color-black">
                         
                         <!-- flavor tag -->
                         <span v-for="(count, tag) in sorted_observationTagCounts" :key="tag" class="badge rounded-pill me-2" style="background-color: grey" >{{ tag }}</span>
@@ -976,7 +976,7 @@
                                     <!-- (1) add button -->
                                     <div class="mobile-col-3 col-sm-6 col-md-4 col-lg-2 mobile-px-1">
                                         <div data-bs-toggle="modal" data-bs-target="#reviewModal">
-                                            <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-plus-lg review-image" viewBox="0 0 16 16">
+                                            <svg xmlns="http://www.w3.org/2000/svg"  fill="#83A9E8" class="bi bi-plus-lg review-image" viewBox="0 0 16 16"> <!--tzh changed currentColor to 83A9E8-->
                                                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
                                             </svg>
                                         </div>
@@ -1354,7 +1354,7 @@
             <div class="col-sm-12 col-md-9 col-lg-3 mobile-view-hide">
                 <!-- where to buy -->
                 <div class="row">
-                    <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 250px;">
+                    <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 250px;">
                         <!-- header text -->
                         <div class="square-inline text-start">
                             <h4 class="mr-auto"> Where to Buy </h4>
@@ -1378,7 +1378,7 @@
             
                 <!-- where to try -->
                 <div class="row">
-                    <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 250px;">
+                    <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 250px;">
                         <!-- header text -->
                         <div class="square-inline text-start">
                             <h4 class="mr-auto"> Where to Try </h4>
@@ -1423,7 +1423,7 @@
                 
                 <!-- 88 bamboo's review -->
                 <div class="row">
-                    <div class="square secondary-square rounded p-3 mb-3">
+                    <div class="square primary-square-green-outline xsecondary-square rounded p-3 mb-3">
                         <!-- header text -->
                         <div class="py-2 text-start">
                             <h4> 88 Bamboo's Review </h4>

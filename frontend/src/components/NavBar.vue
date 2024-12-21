@@ -13,7 +13,7 @@
                 <!-- logo -->
                 <div class="align-items-center col-3">
                     <router-link :to="'/'">
-                        <img src="../../Images/Logo/88 Bamboo.png" style="width: 70px; height: 70px;">
+                        <img src="../../Images/Logo/Drink-X Logo.png" style="width: auto; height: 35px;">
                     </router-link>
                 </div>
 
@@ -120,20 +120,20 @@
                     Latest Drink News
                 </button>
 
-                <button @click="forceLoad('/request/new')" v-if="onRequest && accType == 'user'" class="btn primary-btn border-0 fw-bold text-warning" type="button" style="color:#D58D2D !important;">
+                <button @click="forceLoad('/request/new')" v-if="onRequest && accType == 'user'" class="btn primary-btn border-0 fw-bold " type="button" >  <!-- class="text-warning" style="color:#D58D2D !important;" -->
                     Submit A Drink
                 </button>
                 <router-link v-if="!onRequest && accType == 'user'" :to="'/request/new'">
-                    <button class="btn primary-btn border-0 fw-bold text-warning" type="button"  style="color:#D58D2D !important;">
+                    <button class="btn primary-btn border-0 fw-bold " type="button"  > <!-- class="text-warning" style="color:#D58D2D !important;" -->
                         Submit A Drink
                     </button>
                 </router-link>
 
-                <button @click="forceLoad('/listing/create')" v-if="onCreate && (accType == 'producer' || isAdmin || isModerator)" class="btn primary-btn border-0 fw-bold text-warning" type="button" style="color:#D58D2D !important;">
+                <button @click="forceLoad('/listing/create')" v-if="onCreate && (accType == 'producer' || isAdmin || isModerator)" class="btn primary-btn border-0 fw-bold " type="button" > <!-- class="text-warning" style="color:#D58D2D !important;" -->
                     Add A New Drink
                 </button>
                 <router-link v-if="!onCreate && (accType == 'producer' || isAdmin || isModerator)" :to="'/listing/create'" >
-                    <button class="btn primary-btn border-0 fw-bold text-warning" type="button" style="color:#D58D2D !important;">
+                    <button class="btn primary-btn border-0 fw-bold " type="button" > <!-- class="text-warning" style="color:#D58D2D !important;" -->
                         Add A New Drink
                     </button>
                 </router-link>

@@ -60,7 +60,7 @@
                         <div v-if="userType == 'user' || userType == ''" class="row">
                             <!-- [moderator] listing requests -->
                             <div v-if="isAdmin || isModerator" class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green-outline rounded p-3 mb-3">
                                     <!-- header text -->
                                     <div class="square-inline text-start">
                                         <span v-if="totalRequests != 0" class="square-inline text-start mr-auto">
@@ -81,15 +81,15 @@
                                                 <span class="title-card-text"> {{requestDupes.length}} </span> Duplicate Reports
                                             </p>
                                             <router-link :to="{ path: '/request/view' }">
-                                                <button class="btn secondary-btn-border btn-sm py-2 px-3" style="font-weight: bold;"> View all requests </button>
-                                            </router-link>
+                                                <button class="btn secondary-btn-blue btn-sm py-2 px-3" style="font-weight: bold;"> View all requests </button>
+                                            </router-link> <!-- TZH changed secondary-btn-border to secondary-btn-blue -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- your drinks shelf -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 325px;">
+                                <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 325px;">
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <router-link :to="{ path: '/profile/user/'+userID }" class="reverse-clickable-text">
@@ -130,7 +130,7 @@
                             </div>
                             <!-- brands you follow -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3 text-start" style="height: 325px;">
+                                <div class="square primary-square-green rounded p-3 mb-3 text-start" style="height: 325px;">
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <h4 class="square-inline text-start mr-auto"> Brands You Follow </h4>
@@ -175,8 +175,8 @@
                         <!-- [producer] listing requests / fan questions / activity -->
                         <div v-else-if="userType == 'producer'" class="row">
                             <!-- listing requests -->
-                            <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                            <div class="col-12"> 
+                                <div class="square primary-square-green-outline rounded p-3 mb-3"> <!--tzh changed to green outline -->
                                     <!-- header text -->
                                     <div class="square-inline text-start">
                                         <span v-if="totalRequests != 0" class="square-inline text-start mr-auto">
@@ -205,7 +205,7 @@
                             </div>
                             <!-- fan questions -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green-outline rounded p-3 mb-3">   <!--tzh changed to green outline -->
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <span v-if="unansweredQuestions.length != 0" class="square-inline text-start mr-auto">
@@ -227,7 +227,7 @@
                             </div>
                             <!-- activity -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green-outline rounded p-3 mb-3">  <!--tzh changed to green outline -->
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <h4 class="square-inline text-start mr-auto"> Activity on Your Listings </h4>
@@ -248,7 +248,7 @@
                         <div v-else-if="userType == 'venue'" class="row">
                             <!-- fan questions -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green-outline rounded p-3 mb-3">  <!--tzh changed to green outline -->
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <span v-if="unansweredQuestions.length != 0" class="square-inline text-start mr-auto">
@@ -270,7 +270,7 @@
                             </div>
                             <!-- check ins at your venue -->
                             <div class="col-12">
-                                <div class="square primary-square rounded p-3 mb-3">
+                                <div class="square primary-square-green-outline rounded p-3 mb-3">  <!--tzh changed to green outline -->
                                     <!-- header text -->
                                     <div class="square-inline">
                                         <h4 class="square-inline text-start mr-auto"> Activity on Your Listings </h4>
@@ -297,8 +297,8 @@
                             <div class="col-xl-3 col-lg-4 col-4 mb-3 mobile-view-no-right-padding">
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-sm mobile-ps-0" 
-                                        :class="{ 'primary-btn mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': discovery, 'primary-btn-outline mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': !discovery }"
-                                        v-on:click="changeDiscoveryStatus()">
+                                        :class="{ 'primary-btn-green mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': discovery, 'primary-btn-green-outline mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': !discovery }"
+                                        v-on:click="changeDiscoveryStatus()"> <!--tzh added -green and green-outline -->
                                         <p class="mb-1 discover-and-following mobile-mb-0"> Discover </p>
                                     </button>
                                 </div>
@@ -307,7 +307,7 @@
                             <div class="col-xl-3 col-lg-4 col-4 mb-3 mobile-view-no-padding">
                                 <div class="d-grid gap-2">
                                     <button class="btn btn-sm mobile-ps-0"
-                                        :class="{ 'primary-btn mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': following, 'primary-btn-outline mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': !following }"
+                                        :class="{ 'primary-btn-green mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': following, 'primary-btn-green-outline mobile-convert-to-toggle-button mobile-pt-2 mobile-pb-0': !following }"
                                         v-on:click="changeFollowingStatus()">
                                         <p class="mb-1 discover-and-following mobile-mb-0"> Following </p>
                                     </button>
@@ -508,15 +508,98 @@
 
                             <!-- [else] following clicked -->
                             <div v-else-if="following || discovery == false" class="mobile-ps-0 mobile-pe-0">
+
+
+                                <!-- latest reviews from users the current user is following -->
+                                <h3 class="text-body-secondary text-start pt-3"> 
+                                    <b> Latest Reviews from Followed Users</b>
+                                </h3>
+                                <!-- v-loop for each review -->
+                                <div class="container text-start">
+                                    <h5 v-if="latestReviews.length == 0" style="display: inline-block;"> There is no listing available for the selected filter </h5>
+                                    <div v-else v-for="review in latestReviews" v-bind:key="review.id" class="p-3 mobile-pt-0">
+
+                                        <!-- For latest reviews -->
+                                        <div class="row gap-3">
+
+                                            <!-- row 1: For followed user info and reviewTarget name-->
+                                            <div class="row my-auto">
+                                                <!-- Column 1: Followed user photo-->
+                                                <div class="col-2 d-flex justify-content-center">
+                                                    <img :src="(review['userInfo']['photo'] || defaultProfilePhoto)" class="w-50 h-100 rounded-circle">
+                                                </div>
+
+                                                <!-- Column 2: Followed user displayName and reviewTarget listingName-->
+                                                <div class="col-10 d-flex align-items-center gap-2">
+                                                    <router-link :to="{ path: '/profile/user/' + review.userID }" class="primary-clickable-text">
+                                                        <h5> <b> @{{ review['userInfo']['displayName'] }} </b> </h5>
+                                                    </router-link>
+                                                    <h5>just drank and rated </h5>
+                                                    <router-link :to="{ path: '/listing/view/' +review.reviewTarget.id }" class="primary-clickable-text">
+                                                        <h5> <b> {{ review['reviewTarget']['listingName'] }} </b> </h5>
+                                                    </router-link>
+                                                </div>
+
+                                            </div>
+
+                                            <!-- row 2: For reviewTarget photo, review description, rating and "View drink listing" button-->
+                                            <div class="row">
+                                                <!--Column 1: listing image-->
+                                                <!-- image -->
+                                                <div class="col-md-5 col-12">
+                                                    <div class="image-container mb-3 homepage" >
+                                                        <img v-if="review['reviewTarget']['photo']" :src="review['photo']" class="img-border homepage">
+                                                        <img v-else src="../../../Images/Drinks/Placeholder.png" class="img-border homepage">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Column 2: rating description, rating and "View drink listing" button-->                                                
+                                                <div class="col-md-7 col-12 d-flex flex-column justify-content-between">
+
+                                                    <!-- Row 1 in column 2: Rating description-->
+                                                    <div class="row">
+                                                        <h5> "{{ review["reviewDesc"] }}" </h5>
+                                                    </div>
+
+                                                    <!-- Row 2 in column 2: Rating and "View drink listing" button-->
+                                                    <div class="row">
+                                                        <!-- Rating -->
+                                                        <div class="col-6 d-flex align-items-center">
+                                                            <h1 class="rating-text text-end d-flex align-items-center">
+                                                                {{ review["rating"] }}
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-star-fill ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                                                </svg>
+                                                            </h1>
+                                                        </div>
+
+                                                        <!-- "View drink listing" button -->
+                                                        <div class="col-6">
+                                                            <div class="d-grid gap-5">
+                                                                <router-link :to="{ path: '/listing/view/' +review.reviewTarget.id }" class="primary-clickable-text">
+                                                                    <a class="btn secondary-btn btn-lg" style="font-weight: bold;"> View Drink Listing </a>
+                                                                </router-link>
+                                                            </div>
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <!-- recently added  -->
-                                <!-- <h3 class="text-body-secondary text-start pt-3"> 
+                                <h3 class="text-body-secondary text-start pt-3"> 
                                     <b> Recently Added </b> 
-                                </h3> -->
+                                </h3>
                                 <!-- v-loop for each listing -->
                                 <div class="container text-start">
                                     <h5 v-if="recentlyAdded==''" style="display: inline-block;"> There is no listing available for the selected filter </h5>
                                     <div v-for="listing in recentlyAdded" v-bind:key="listing.id" class="p-3 mobile-pt-0">
-
+                                        <!-- For latest reviews -->
+                                        
+                                        <!-- For listings -->
                                         <div class="row">
                                             <!-- image -->
                                             <div class="col-xl-5 col-12">
@@ -703,6 +786,7 @@
 
                 // for following
                 following: false,
+                userFollowing: [], // list of users that the current user is following
                 followedProducers: [],
                 followedVenues: [],
                 allProducerDrinks: [],
@@ -713,6 +797,9 @@
                 // for bookmark
                 user: null,
                 userBookmarks: [],
+
+                // for latest reviews by users that the current user is following
+                latestReviews: [],
                 
                 // for bookmark component
                 bookmarkListingID: {},
@@ -793,37 +880,39 @@
                     }
                 // users
                 // _id, username, displayName, choiceDrinks, drinkLists, modType, photo
-                    try {
-                        const response = await this.$axios.get(`${process.env.VUE_APP_API_URL}/getData/getUsers`);
-                        this.users = response.data;
-                        if (this.userType == 'user') {
-                            this.types = this.users.find((user) => {
-                                return user["id"] == this.userID;
-                            }).modType;
+                try {
+                    const response = await this.$axios.get(`${process.env.VUE_APP_API_URL}/getData/getUser/${this.userID}`);
+                    this.user = response.data;
+                    if (this.user) {
+                        // Get the list of users that the current user is following
+
+                        this.userBookmarks = this.user.drinkLists;
+                        this.getFollowedProducers()
+                        this.getFollowedVenues()
+                        this.getListingsByProducer()
+                        this.getListingsByVenue()
+                        this.getRecentlyAdded()
+                        this.getQuestionsUpdates();
+                        
+                        if (this.user.followLists.users.length > 0) {
+                            this.userFollowing = this.user.followLists.users;
+                            // Get the latest reviews from users that the current user is following
+                            this.getUsersLatestReviews()
                         }
-                        this.user = this.users.find(user => user.id == this.userID)
-                        if (this.user) {
-                            this.userBookmarks = this.user.drinkLists;
-                            this.getFollowedProducers()
-                            this.getFollowedVenues()
-                            this.getListingsByProducer()
-                            this.getListingsByVenue()
-                            this.getRecentlyAdded()
-                            this.getQuestionsUpdates();
-                            // check if user is an admin
-                            if (this.user.isAdmin) {
-                                this.isAdmin = true
-                            }
-                            // if user is not admin, check if user is a moderator
-                            if (this.user.modType.length > 0) {
-                                this.isModerator = true
-                            }
+                        // check if user is an admin
+                        if (this.user.isAdmin) {
+                            this.isAdmin = true
                         }
-                    } 
-                    catch (error) {
-                        console.error(error);
-                        this.dataLoaded = null;
+                        // if user is not admin, check if user is a moderator
+                        if (this.user.modType.length > 0) {
+                            this.isModerator = true
+                        }
                     }
+                } 
+                catch (error) {
+                    console.error(error);
+                    // this.dataLoaded = null;
+                }
                 // venuesAPI
                 // _id, venueName, venueDesc, originCountry
                 // try {
@@ -945,14 +1034,13 @@
 
             // get username of user accessing page
             getUsername() {
-                let user = this.users.find(user => user.id == parseInt(this.userID))
                 let producer = this.producers.find(producer => producer.id == parseInt(this.userID))
                 let venue = this.venues.find(venue => venue.id == parseInt(this.userID))
-                if (user && this.userType == 'user') {
-                    this.username = user.username
-                    this.displayName = user.displayName
+                if (this.user && this.userType == 'user') {
+                    this.username = this.user.username
+                    this.displayName = this.user.displayName
                     // drink shelf
-                    let allDrinkShelf = Object.values(user.drinkLists).flatMap(obj => obj.listItems);
+                    let allDrinkShelf = Object.values(this.user.drinkLists).flatMap(obj => obj.listItems);
                     allDrinkShelf.sort((a, b) => {
                         return new Date(b[0]) - new Date(a[0]);
                     })
@@ -1193,6 +1281,7 @@
                 }
             },
 
+            // Function to sort results based on selected category
             sortResults() {
                 let category = this.sortSelection.category;
 
@@ -1431,12 +1520,25 @@
                 return listing;
             },
 
+            // get latest review from any users that the current user is following
+            async getUsersLatestReviews() {
+
+                // Get the list of users that the current user is following
+                let user_ids = this.user.followLists.users.join(",");
+
+                try {
+                    const response = await this.$axios.get(`${process.env.VUE_APP_API_URL}/getData/getReviewsByUserIds?user_ids=${user_ids}`);
+                    this.latestReviews = response.data.data;
+                }
+                catch (error) {
+                    console.error(error);
+                    this.latestReviews = [];
+                }
+            },
+
             // get producers that user follows
             getFollowedProducers() {
-                const user = this.users.find(user => {
-                    return user["id"] == this.userID;
-                });
-                this.followedProducers = user.followLists.producers;
+                this.followedProducers = this.user.followLists.producers;
             },
 
             // get listings by producer
@@ -1449,11 +1551,8 @@
 
             // get venues that user follows
             getFollowedVenues() {
-                const user = this.users.find(user => {
-                    return user["id"] == this.userID;
-                });
-                if (user) {
-                    this.followedVenues = user.followLists.venues;
+                if (this.user) {
+                    this.followedVenues = this.user.followLists.venues;
                 }
             },
 
@@ -1534,7 +1633,6 @@
                         }
                         return arr;
                     }, []);
-                console.log(producerQuestions)
                 // get all following venues questions with answers
                 const venueQuestions = this.venues
                     .filter(venue => JSON.stringify(this.followedVenues).includes(JSON.stringify(venue.id)))

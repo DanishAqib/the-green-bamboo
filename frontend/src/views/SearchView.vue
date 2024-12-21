@@ -595,7 +595,7 @@ x<!-- Search page from navigation bar. Globally available, and should still use 
 
             // if there is a search input
             if (this.searchTerm != '' || this.searchTerm != null) {
-                this.searchTerm = this.searchTerm.toLowerCase();
+                this.searchTerm = this.searchTerm?.toLowerCase();
                 this.runSearch();
             }
             else {
@@ -643,7 +643,7 @@ x<!-- Search page from navigation bar. Globally available, and should still use 
 
                     // search by listingName, originCountry, drinkType, typeCategory
                     this.resultListings = this.resultListings.filter((listing) => {
-                        return listing["listingName"].toLowerCase().includes(this.searchTerm) || listing["originCountry"].toLowerCase().includes(this.searchTerm) || listing["drinkType"].toLowerCase().includes(this.searchTerm) || listing["typeCategory"]?.toLowerCase().includes(this.searchTerm);
+                        return listing["listingName"]?.toLowerCase().includes(this.searchTerm) || listing["originCountry"]?.toLowerCase().includes(this.searchTerm) || listing["drinkType"]?.toLowerCase().includes(this.searchTerm) || listing["typeCategory"]?.toLowerCase().includes(this.searchTerm);
                     });
                     this.originalResults = this.resultListings;
                 }
@@ -662,7 +662,7 @@ x<!-- Search page from navigation bar. Globally available, and should still use 
 
                     // search by producerName, originCountry
                     this.producerListings = this.producerList.filter((producer) => {
-                        return producer["producerName"].toLowerCase().includes(this.searchTerm) || producer["originCountry"].toLowerCase().includes(this.searchTerm);
+                        return producer["producerName"]?.toLowerCase().includes(this.searchTerm) || producer["originCountry"]?.toLowerCase().includes(this.searchTerm);
                     });
                 }
                 catch (error) {
@@ -680,7 +680,7 @@ x<!-- Search page from navigation bar. Globally available, and should still use 
 
                     // search by venueName, originLocation
                     this.venueListings = this.venueList.filter((venue) => {
-                        return venue["venueName"].toLowerCase().includes(this.searchTerm) || venue["originLocation"].toLowerCase().includes(this.searchTerm);
+                        return venue["venueName"]?.toLowerCase().includes(this.searchTerm) || venue["originLocation"]?.toLowerCase().includes(this.searchTerm);
                     });
 
                 } 

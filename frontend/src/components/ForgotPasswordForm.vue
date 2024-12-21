@@ -29,7 +29,9 @@
 
 
         <!-- 3rd Stage: Input boxes to enter new password -->
-        <input type="password" v-if="resetStage == 'password'" v-model="newPassword" placeholder="Enter new password" class="rounded p-2" required>
+        New password: <br>
+        <input type="password" v-if="resetStage == 'password'" v-model="newPassword" placeholder="Enter new password" class="rounded p-2" required> <br>
+        Confirm new password: <br>
         <input type="password" v-if="resetStage == 'password'" v-model="confirmPassword" placeholder="Confirm new password" class="rounded p-2" required>
         <!-- Loading message -->
         <!-- Error message if both password do not match -->
@@ -50,7 +52,7 @@
             <button v-if="resetStage == 'otp'" @click="verifyOTP" class="btn secondary-btn-border-thick btn-md px-3">Verify OTP</button>
 
             <!-- Button to reset password -->
-            <button v-if="resetStage == 'password' && newPassword == confirmPassword" @click="resetPassword" class="btn secondary-btn-border-thick btn-md px-3">Reset Password</button>
+            <button v-if="resetStage == 'password' && newPassword == confirmPassword" @click="resetPassword" :disabled="isButtonDisabled" class="btn secondary-btn-border-thick btn-md px-3">Reset Password</button>
         </div>
     </div>  
 
@@ -172,6 +174,7 @@ export default {
             if(responseCode == 201){
                 this.resetStage = "password"
                 this.verifyErrorMessage = ""
+                this.isButtonDisabled = false;
             }
             else if(responseCode == 400){
                 this.verifyErrorMessage = "OTP is wrong or expired."
@@ -187,6 +190,9 @@ export default {
             if(this.newPassword != this.confirmPassword){
                 return
             }
+
+            // Disable button to prevent multiple clicks
+            this.isButtonDisabled = true;
 
             // call api to reset password
             let submitURL = `${process.env.VUE_APP_API_URL}/authcheck/resetPasswordLogin`
