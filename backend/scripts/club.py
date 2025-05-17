@@ -1507,6 +1507,80 @@ def addPost():
             conn.commit()
 
             print(f"Added {points['proofPoints']} points to user {user['userID']} for adding a post")
+                # 1️⃣  Get the badge that tracks club posts
+            cur.execute(
+                'SELECT id FROM "badges" '
+                'WHERE "relatedEntity" = %s '
+                'ORDER BY id LIMIT 1',
+                ('ClubPost',)
+            )
+            badge_row = cur.fetchone()
+            if not badge_row:           # nothing to do if no badge defined
+                conn.commit()
+                return
+
+            club_badge_id = badge_row['id']
+
+            # 2️⃣  Does this user already have the badge?
+            cur.execute(
+                'SELECT id, "currentLevel", "currentProgress" '
+                'FROM "userBadges" '
+                'WHERE "userId" = %s AND "badgeId" = %s',
+                (user['userID'], club_badge_id)
+            )
+            user_badge = cur.fetchone()
+
+            if user_badge is None:
+                # No row yet → give them level-1 badge with 1 action completed
+                cur.execute(
+                    '''INSERT INTO "userBadges"
+                    ("userId","badgeId","currentLevel","currentProgress",
+                        "dateEarned","lastUpdated")
+                    VALUES (%s,%s,%s,%s,NOW(),NOW())''',
+                    (user['userID'], club_badge_id, 1, 1)
+                )
+                conn.commit()
+                return jsonify({
+            'message': 'Post added successfully',
+            'postID': post_id,
+            'pointsEarned': points['proofPoints']
+        }), 201
+            # 3️⃣  Increment progress
+            progress   = user_badge["currentProgress"] + 1
+            level      = user_badge["currentLevel"]
+
+            # Pull the ClubPost rules once
+            cur.execute(
+                'SELECT "levelStart","levelEnd","actionsRequired" '
+                'FROM "badgeRules" '
+                'WHERE "actionType" = %s '
+                'ORDER BY "levelStart"',
+                ('ClubPost',)
+            )
+            rules = cur.fetchall()
+
+            # Helper → actions needed for a specific level
+            def needed_for(lvl: int) -> int:
+                for r in rules:
+                    if r["levelStart"] <= lvl <= r["levelEnd"]:
+                        return r["actionsRequired"]
+                return rules[-1]["actionsRequired"]   # fallback (shouldn’t hit)
+
+            # 4️⃣  Apply level-ups while we have enough actions
+            while progress >= needed_for(level) and level < 100:
+                progress -= needed_for(level)
+                level    += 1
+
+            # 5️⃣  Persist the new state
+            cur.execute(
+                '''UPDATE "userBadges"
+                SET "currentLevel" = %s,
+                    "currentProgress" = %s,
+                    "lastUpdated" = NOW()
+                WHERE id = %s''',
+                (level, progress, user_badge["id"])
+            )
+            conn.commit()
 
         return jsonify({
             'message': 'Post added successfully',
@@ -2797,6 +2871,61 @@ def removePost():
             conn.commit()
 
             print(f"Deducted {points['proofPoints']} points from user {user['userID']} for removing the post.")
+
+            cur.execute(
+                'SELECT id FROM "badges" WHERE "relatedEntity" = %s ORDER BY id LIMIT 1',
+                ('ClubPost',)
+                )
+            badge_row = cur.fetchone()
+            if not badge_row:        # nothing to adjust if badge doesn’t exist
+                conn.commit()
+                return
+            
+            club_badge_id = badge_row['id']
+            # poster_id     = user['userID']  
+            cur.execute(
+                'SELECT id, "currentLevel", "currentProgress" '
+                'FROM "userBadges" '
+                'WHERE "userId" = %s AND "badgeId" = %s',
+                (user['userID'], club_badge_id)
+            )
+            user_badge = cur.fetchone()
+            if user_badge is None:                # user never had the badge
+                conn.commit()
+                return
+            progress = user_badge["currentProgress"] - 1
+            level    = user_badge["currentLevel"]
+            cur.execute(
+                'SELECT "levelStart","levelEnd","actionsRequired" '
+                'FROM "badgeRules" '
+                'WHERE "actionType" = %s '
+                'ORDER BY "levelStart"',
+                ('ClubPost',)
+            )
+            rules = cur.fetchall()
+
+            def needed_for(lvl: int) -> int:
+                for r in rules:
+                    if r["levelStart"] <= lvl <= r["levelEnd"]:
+                        return r["actionsRequired"]
+                return rules[-1]["actionsRequired"]
+            while progress < 0 and level > 1:
+                level -= 1
+                progress += needed_for(level)
+            if level == 1 and progress <= 0:
+                cur.execute('DELETE FROM "userBadges" WHERE id = %s', (user_badge["id"],))
+                conn.commit()
+                return
+            # 6️⃣  Otherwise persist the downgraded state
+            cur.execute(
+                '''UPDATE "userBadges"
+                SET "currentLevel"   = %s,
+                    "currentProgress" = %s,
+                    "lastUpdated"    = NOW()
+                WHERE id = %s''',
+                (level, progress, user_badge["id"])
+            )
+            conn.commit()
 
         return jsonify({
             'message': 'Post removed successfully',
