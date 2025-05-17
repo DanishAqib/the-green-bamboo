@@ -13,6 +13,9 @@ DROP TABLE IF EXISTS "clubMembers" CASCADE;
 DROP TABLE IF EXISTS "clubs" CASCADE;
 DROP TABLE IF EXISTS "accountRequests" CASCADE;
 DROP TABLE IF EXISTS "badges" CASCADE;
+DROP TABLE IF EXISTS "badgeActions" CASCADE;
+DROP TABLE IF EXISTS "badgeRules" CASCADE;
+DROP TABLE IF EXISTS "userBadges" CASCADE;
 DROP TABLE IF EXISTS "colours" CASCADE;
 DROP TABLE IF EXISTS "countries" CASCADE;
 DROP TABLE IF EXISTS "drinkTypes" CASCADE;
@@ -116,7 +119,42 @@ CREATE TABLE "badges" (
     "id" SERIAL PRIMARY KEY,
     "badgeName" VARCHAR(255),
     "badgePhoto" TEXT,
-    "badgeDesc" TEXT
+    "badgeDesc" TEXT,
+    "badgeType" VARCHAR(50), -- 'Country', 'Category', 'Action'
+    "relatedEntity" VARCHAR(255) NULL, -- Stores country name, drink category, or action type
+    "badgeLevel" INTEGER DEFAULT 1
+);
+
+-- ========= "userBadges" =========
+CREATE TABLE "userBadges" (
+    "id" SERIAL PRIMARY KEY,
+    "userId" INTEGER REFERENCES "users"("id") ON DELETE CASCADE,
+    "badgeId" INTEGER REFERENCES "badges"("id") ON DELETE CASCADE,
+    "currentLevel" INTEGER DEFAULT 1,
+    "currentProgress" INTEGER DEFAULT 0, -- Progress toward next level
+    "dateEarned" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "lastUpdated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE("userId", "badgeId")
+);
+
+-- ========= "badgeRules" =========
+CREATE TABLE "badgeRules" (
+    "id" SERIAL PRIMARY KEY,
+    "actionType" VARCHAR(50) NOT NULL, -- 'Country', 'Category', 'Action'
+    "levelStart" INTEGER NOT NULL,
+    "levelEnd" INTEGER NOT NULL,
+    "actionsRequired" INTEGER NOT NULL -- Number of actions needed for levels in this range
+);
+
+-- ========= "badgeActions" =========
+CREATE TABLE "badgeActions" (
+    "id" SERIAL PRIMARY KEY,
+    "userId" INTEGER REFERENCES "users"("id") ON DELETE CASCADE,
+    "actionType" VARCHAR(100) NOT NULL, -- 'Review', 'ExtensiveReview', 'PhotoAttached', etc.
+    "entityId" INTEGER NULL, -- Related entity ID (review ID, post ID, etc.)
+    "entityType" VARCHAR(100) NULL, -- Type of entity ('review', 'comment', 'post', etc.)
+    "relatedEntity" VARCHAR(255) NULL, -- For country/category badges (country name, category name)
+    "createdDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ========= "colours" =========

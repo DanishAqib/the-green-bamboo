@@ -21,6 +21,7 @@ from flask import Blueprint, g, request, jsonify
 # ------------------------------------------------------
 from bson import json_util
 from bson.objectid import ObjectId
+from scripts import badge_helpers
 # ======================================================
 
 # [NEW] TO BE ADDED FOR POSTGRES:
@@ -46,89 +47,250 @@ def parse_json(data):
 # - Possible return codes: 201 (Deleted), 400 (Review doesn't exist), 500 (Error during deletion)
 
 
-@blueprint.route("/deleteReview/<id>", methods= ['DELETE'])
+@blueprint.route("/deleteReview/<id>", methods=['DELETE'])
 def deleteReview(id):
+    """
+    Delete a review and update associated badges and points
+    
+    This function:
+    1. Finds and validates the review
+    2. Calculates points to deduct
+    3. Processes badge updates for all relevant badge types
+    4. Deletes the review and associated data
+    5. Returns the results with badge updates
+    """
     conn = g.db
     cur = conn.cursor()
 
+    # Step 1: Find and validate the review
     cur.execute("SELECT * FROM reviews WHERE id = %s", (id,))
     existingReview = cur.fetchone()
 
     if existingReview is None:
-        return jsonify(
-            {   
-                "code": 400,
-                "data": {
-                    "id": id
-                },
-                "message": "Review doesn't exist."
-            }
-        ), 400
+        return jsonify({   
+            "code": 400,
+            "data": {"id": id},
+            "message": "Review doesn't exist."
+        }), 400
     
-    # Get the total points earned for the review
+    # Step 2: Calculate points to deduct based on review content
     rule_points_id = []
 
-    # Review text
-    if (existingReview['reviewDesc'] != None or existingReview['reviewDesc'] != ''):
+    # Basic review text
+    if existingReview.get('reviewDesc'):
         rule_points_id.append(2)
 
-    # Extended review: color, aroma, taste, finish
-    if (existingReview['finish'] != None or existingReview['colour'] != None or existingReview['aroma'] != None or existingReview['taste'] != None) and \
-        (existingReview['finish'] != '' or existingReview['colour'] != '' or existingReview['aroma'] != '' or existingReview['taste'] != ''):
+    # Extended review details
+    has_extended_details = any([
+        existingReview.get('finish'), 
+        existingReview.get('colour'),
+        existingReview.get('aroma'), 
+        existingReview.get('taste')
+    ])
+    if has_extended_details:
         rule_points_id.append(3)
 
-    # Attach image
-    if (existingReview['photo'] != None and existingReview['photo'] != ''):
+    # Photo attached
+    if existingReview.get('photo'):
         rule_points_id.append(4)
 
-    # Tag location
-    if (existingReview['location'] != None and existingReview['location'] != ''):
+    # Location tagged
+    if existingReview.get('location'):
         rule_points_id.append(5)
 
-    # Tag friends
-    if existingReview['taggedUsers']:
+    # Friends tagged
+    if existingReview.get('taggedUsers'):
         rule_points_id.append(6)
 
-    # Get total proof points earned
-    cur.execute('SELECT SUM("proofPoints") FROM "pointSystemRules" WHERE id IN %s', (tuple(rule_points_id),))
-    total_points = cur.fetchone()['sum']
+    # Get total points to deduct
+    total_points = 0
+    if rule_points_id:
+        # Fix: Handle the case where rule_points_id has only one element
+        if len(rule_points_id) == 1:
+            cur.execute('SELECT "proofPoints" FROM "pointSystemRules" WHERE id = %s', 
+                       (rule_points_id[0],))
+            result = cur.fetchone()
+            total_points = result['proofPoints'] if result else 0
+        else:
+            cur.execute('SELECT SUM("proofPoints") FROM "pointSystemRules" WHERE id IN %s', 
+                       (tuple(rule_points_id),))
+            result = cur.fetchone()
+            # Fix: Handle the case where sum returns NULL
+            total_points = result['sum'] if result and result['sum'] is not None else 0
 
     try:
-        if(existingReview['photo']):
-            s3Images.deleteImageFromS3(existingReview['photo'])
-
+        # Step 3: Get drink information for badge processing
+        cur.execute("""
+            SELECT "drinkType", "typeCategory", "originCountry"
+            FROM "listings"
+            WHERE "id" = %s
+        """, (existingReview['reviewTarget'],))
+        
+        drink = cur.fetchone()
+        if not drink:
+            # Handle case where drink no longer exists
+            drink = {'drinkType': None, 'typeCategory': None, 'originCountry': None}
+        
+        # Step 4: Process all badge updates
+        badge_updates = []
+        
+        # Country badge
+        if drink['originCountry']:
+            country_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'],  # user ID
+                'Review',                 # action type  
+                drink['originCountry'],    # related entity (country name)
+                id,                        # entity ID (review ID)
+                'review'                   # entity type
+            )
+            badge_updates.extend(country_updates)
+        
+        # Drink Type badge
+        if drink['drinkType']:
+            type_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'Review', 
+                drink['drinkType'], 
+                id, 
+                'review'
+            )
+            badge_updates.extend(type_updates)
+        
+        # Category badge
+        if drink['typeCategory']:
+            category_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'Review', 
+                drink['typeCategory'], 
+                id, 
+                'review'
+            )
+            badge_updates.extend(category_updates)
+        
+        # General Review badge
+        review_updates = badge_helpers.remove_badge_action(
+            conn, 
+            existingReview['userID'], 
+            'Review', 
+            None, 
+            id, 
+            'review'
+        )
+        badge_updates.extend(review_updates)
+        
+        # Extensive Review badge
+        if has_extended_details:
+            extensive_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'ExtensiveReview', 
+                None, 
+                id, 
+                'review'
+            )
+            badge_updates.extend(extensive_updates)
+        
+        # Photo badge
+        if existingReview.get('photo'):
+            # Delete the image from S3
+            if existingReview['photo']:
+                s3Images.deleteImageFromS3(existingReview['photo'])
+                
+            photo_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'PhotoAttached', 
+                None, 
+                id, 
+                'review'
+            )
+            badge_updates.extend(photo_updates)
+        
+        # Location badge
+        if existingReview.get('location'):
+            location_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'LocationTagged', 
+                None, 
+                id, 
+                'review'
+            )
+            badge_updates.extend(location_updates)
+        
+        # Friend tagged badge
+        if existingReview.get('taggedUsers'):
+            friend_updates = badge_helpers.remove_badge_action(
+                conn, 
+                existingReview['userID'], 
+                'FriendTagged', 
+                None, 
+                id, 
+                'review'
+            )
+            badge_updates.extend(friend_updates)
+        
+        # Step 5: Delete the review and associated data
         # Delete associated votes
-        cur.execute("DELETE FROM \"reviewsUserVotes\" WHERE \"reviewId\" = %s", (id,))
-
-        # Delete the review
-        cur.execute("DELETE FROM reviews WHERE id = %s", (id,))
-
+        cur.execute('DELETE FROM "reviewsUserVotes" WHERE "reviewId" = %s', (id,))
+        
+        # Delete the review itself
+        cur.execute('DELETE FROM reviews WHERE id = %s', (id,))
+        
+        # Step 6: Format badge updates for the response
+        badge_details = []
+        if badge_updates:
+            for badge_id, old_level, new_level in badge_updates:
+                cur.execute("""
+                    SELECT "badgeName", "badgePhoto", "badgeDesc", "badgeType", "relatedEntity" 
+                    FROM "badges" 
+                    WHERE id = %s
+                """, (badge_id,))
+                badge = cur.fetchone()
+                if badge:
+                    badge_details.append({
+                        "badgeName": badge['badgeName'],
+                        "badgeType": badge['badgeType'],
+                        "relatedEntity": badge['relatedEntity'],
+                        "oldLevel": old_level,
+                        "newLevel": new_level
+                    })
+        
+        # Step 7: Update user points
+        if total_points > 0:
+            cur.execute("""
+                UPDATE "pointsRecorder" 
+                SET "currentPoints" = "currentPoints" - %s 
+                WHERE id = %s AND "userType" = %s
+            """, (total_points, existingReview['userID'], 'user'))
+            
+        # Commit all changes
         conn.commit()
-
-        # Update user points
-        if total_points:
-            cur.execute('UPDATE "pointsRecorder" SET "currentPoints" = "currentPoints" - %s WHERE id = %s AND "userType" = %s', (total_points, existingReview['userID'], 'user',))
-            conn.commit()
-
-        return jsonify(
-            {   
-                "code": 200,
-                "data": id,
-                "deductedPoints": total_points
-            }
-        ), 200
+        
+        # Return success response with details
+        return jsonify({   
+            "code": 200,
+            "data": id,
+            "deductedPoints": total_points,
+            "badgeUpdates": badge_details
+        }), 200
 
     except Exception as e:
+        # Roll back any changes if an error occurs
+        conn.rollback()
         print(str(e))
-        return jsonify(
-            {
-                "code": 500,
-                "data": {
-                    "id": id
-                },
-                "message": "An error occurred deleting the listing."
-            }
-        ), 500
+        import traceback
+        traceback.print_exc()
+        
+        return jsonify({
+            "code": 500,
+            "data": {"id": id},
+            "message": "An error occurred deleting the review.",
+            "error": str(e)
+        }), 500
     
 # -----------------------------------------------------------------------------------------
 # [DELETE] Deletes a producer review

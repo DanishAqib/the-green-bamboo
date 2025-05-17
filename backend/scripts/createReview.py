@@ -7,7 +7,7 @@ import os
 import s3Images
 from flask import Blueprint, g, request, jsonify
 from datetime import datetime
-from scripts import pointsHelperFunc
+from scripts import pointsHelperFunc, badge_helpers
 
 file_name = os.path.basename(__file__)
 blueprint = Blueprint(file_name[:-3], __name__)
@@ -40,7 +40,7 @@ def create_username(location_name):
 # - Insert entry into the "reviews" collection. Follows reviews dataclass requirements.
 # - Duplicate review check: If a review with the same userID and reviewTarget exists, reject the request
 # - Possible return codes: 201 (Created), 400 (Duplicate Detected), 500 (Error during creation)
-@blueprint.route("/createReview", methods= ['POST'])
+@blueprint.route("/createReview", methods=['POST'])
 def createReviews():
     raw_review = request.get_json()
     conn = g.db
@@ -87,93 +87,131 @@ def createReviews():
         location_name = raw_review['location']
         address = raw_review['address']
         cur.execute("""SELECT id FROM venues WHERE "venueName" = %s AND "address" = %s""", (location_name, address))
-        venue_id = cur.fetchone()['id'] if cur.rowcount > 0 else None
+        venue_row = cur.fetchone()
+        venue_id = venue_row['id'] if venue_row else None
         if not venue_id:
-            username = create_username(location_name)
+            username = create_username(location_name)  # Assuming this is an existing function
             insert_venue_sql = """INSERT INTO venues ("venueName", "address", "venueType", "originLocation", "venueDesc",
                                   "hashedPassword", "claimStatus", photo, "reservationDetails", username)
                                   VALUES (%s, %s, '', '', '', %s, FALSE, '', '', %s) RETURNING id"""
             hashed_password = 'hashed_password'
             cur.execute(insert_venue_sql, (location_name, address, hashed_password, username))
-            venue_id = cur.fetchone()['id'] if cur.rowcount > 0 else None
+            venue_row = cur.fetchone()
+            venue_id = venue_row['id'] if venue_row else None
             print(venue_id)
             conn.commit()
 
     # Upload image into S3
-    if raw_review['photo']:
+    if raw_review.get('photo'):
         raw_review['photo'] = s3Images.uploadBase64ImageToS3(raw_review['photo'])
-
 
     # Prepare the insert SQL for reviews
     insert_review_sql = """INSERT INTO reviews ("userID", "reviewTarget", "rating", "reviewDesc", "reviewType", "createdDate", 
                           language, finish, "willRecommend", "wouldBuyAgain", "taggedUsers", "flavourTag", photo, colour, 
                           aroma, taste, "observationTag", location, address)
-                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    review_values = (user_id, review_target, float(raw_review['rating']), raw_review['reviewDesc'], raw_review['reviewType'],
-                     created_date, raw_review['language'], raw_review['finish'], will_recommend,
-                     would_buy_again, tagged_users, flavour_tags, raw_review['photo'],
-                     raw_review['colour'], raw_review['aroma'], raw_review['taste'],
-                     observation_tags, venue_id, raw_review['address'])
+                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id"""
+    review_values = (user_id, review_target, float(raw_review['rating']), raw_review['reviewDesc'], raw_review.get('reviewType', 'regular'),
+                     created_date, raw_review.get('language', ''), raw_review.get('finish', ''), will_recommend,
+                     would_buy_again, tagged_users, flavour_tags, raw_review.get('photo', ''),
+                     raw_review.get('colour', ''), raw_review.get('aroma', ''), raw_review.get('taste', ''),
+                     observation_tags, venue_id, raw_review.get('address', ''))
 
     try:
         cur.execute(insert_review_sql, review_values)
+        review_id = cur.fetchone()['id']
+        
+        # Process badges for this review
+        badge_updates = badge_helpers.process_badges_for_review(conn, user_id, raw_review, review_id)
+        
+        # Create a votes record for this review
+        cur.execute("""
+            INSERT INTO "reviewsUserVotes" ("reviewId", upvotes, downvotes)
+            VALUES (%s, '[]', '[]')
+        """, (review_id,))
+        
         conn.commit()
 
         if pointsHelperFunc.check_max_proof_points(user_id):
             return jsonify({
-                "code": 400,
-                "data": raw_review['reviewDesc']
+                "code": 201,
+                "data": raw_review['reviewDesc'],
+                "message": "Review created successfully, but points limit reached."
             }), 201
 
         # Calculate proof points earned 
         rule_fulfiled_id = []
 
         # Basic review: Simple text 
-        if (raw_review['reviewDesc'] != None):
+        if raw_review.get('reviewDesc'):
             rule_fulfiled_id.append(2)
         
         # Extended review: color, aroma, taste, finish
-        if (raw_review['finish'] != None or raw_review['colour'] != None or raw_review['aroma'] != None or raw_review['taste'] != None) and \
-            (raw_review['finish'] != '' or raw_review['colour'] != '' or raw_review['aroma'] != '' or raw_review['taste'] != ''):
+        if (raw_review.get('finish') or raw_review.get('colour') or 
+            raw_review.get('aroma') or raw_review.get('taste')):
             rule_fulfiled_id.append(3)
 
         # Attach image
-        if (raw_review['photo'] != None):
+        if raw_review.get('photo'):
             rule_fulfiled_id.append(4)
 
         # Tag location
-        if (venue_id != None):
+        if venue_id:
             rule_fulfiled_id.append(5)
 
         # Tag friends
-        if (tagged_users != []):
+        if tagged_users:
             rule_fulfiled_id.append(6)
 
         # Get total proof points earned 
-        cur.execute('SELECT SUM("proofPoints") FROM "pointSystemRules" WHERE id IN %s', (tuple(rule_fulfiled_id),))
-        total_points = cur.fetchone()['sum']
-
+        if rule_fulfiled_id:
+            cur.execute('SELECT SUM("proofPoints") FROM "pointSystemRules" WHERE id IN %s', (tuple(rule_fulfiled_id),))
+            result = cur.fetchone()
+            total_points = result['sum'] if result else 0
+        else:
+            total_points = 0
 
         # Update user points
         if total_points:
-            cur.execute('UPDATE "pointsRecorder" SET "currentPoints" = "currentPoints" + %s WHERE id = %s AND "userType" = %s', (total_points, user_id, 'user',))
+            cur.execute('UPDATE "pointsRecorder" SET "currentPoints" = "currentPoints" + %s WHERE id = %s AND "userType" = %s', 
+                       (total_points, user_id, 'user',))
             conn.commit()
-
             print(f"Awarded points: {total_points}")
+
+        # Format badge updates for response
+        badge_details = []
+        if badge_updates:
+            for badge_id, old_level, new_level in badge_updates:
+                cur.execute("""
+                    SELECT "badgeName", "badgePhoto", "badgeDesc", "badgeType", "relatedEntity" 
+                    FROM "badges" 
+                    WHERE id = %s
+                """, (badge_id,))
+                badge = cur.fetchone()
+                if badge:
+                    badge_details.append({
+                        "badgeName": badge['badgeName'],
+                        "badgeType": badge['badgeType'],
+                        "relatedEntity": badge['relatedEntity'],
+                        "oldLevel": old_level,
+                        "newLevel": new_level
+                    })
 
         return jsonify({
             "code": 201,
             "data": raw_review['reviewDesc'],
-            "proofPointsEarned": total_points
+            "proofPointsEarned": total_points,
+            "badgeUpdates": badge_details
         }), 201
     except Exception as e:
         print(str(e))
+        conn.rollback()
         return jsonify({
             "code": 500,
             "data": {
                 "listingName": raw_review['reviewDesc']
             },
-            "message": "An error occurred creating the listing."
+            "message": "An error occurred creating the review.",
+            "error": str(e)
         }), 500
 # ======================================================
 
