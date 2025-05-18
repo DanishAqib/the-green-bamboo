@@ -1657,8 +1657,7 @@ def addComment():
         cur.execute('SELECT "userID", "userType" FROM "clubMembers" WHERE id = %s', (commenter_id,))
         user = cur.fetchone()
 
-        if (user['userType'] == 'user'):
-            
+        if (user['userType'] == 'user'): 
             if pointsHelperFunc.check_max_proof_points(user['userID']):
                 return jsonify({
                     'message': 'Comment added successfully',
@@ -1681,6 +1680,73 @@ def addComment():
             conn.commit()
 
             print(f"Added {points['proofPoints']} points to user {user['userID']} for adding a comment")
+            cur.execute(
+                'SELECT id FROM "badges" '
+                'WHERE "relatedEntity" = %s '
+                'ORDER BY id LIMIT 1',
+                ('Comment',)
+            )
+            badge_row = cur.fetchone()
+            if not badge_row:                                 # badge not defined
+                conn.commit()
+                return
+
+            comment_badge_id = badge_row['id']
+            # commenter_id     = user['userID']
+            # 2️⃣  Does this user already own the badge?
+            cur.execute(
+                'SELECT id, "currentLevel", "currentProgress" '
+                'FROM "userBadges" '
+                'WHERE "userId" = %s AND "badgeId" = %s',
+                (user['userID'], comment_badge_id)
+            )
+            ub = cur.fetchone()
+            if ub is None:
+                # First-ever comment → give badge, level 1, progress 1
+                cur.execute(
+                    '''INSERT INTO "userBadges"
+                    ("userId","badgeId","currentLevel","currentProgress",
+                        "dateEarned","lastUpdated")
+                    VALUES (%s,%s,%s,%s,NOW(),NOW())''',
+                    (user['userID'], comment_badge_id, 1, 1)
+                )
+                conn.commit()
+                return
+            # 3️⃣  Increment progress
+            progress = ub["currentProgress"] + 1
+            level    = ub["currentLevel"]
+
+            # 4️⃣  Fetch Comment rules once
+            cur.execute(
+                'SELECT "levelStart","levelEnd","actionsRequired" '
+                'FROM "badgeRules" '
+                'WHERE "actionType" = %s '
+                'ORDER BY "levelStart"',
+                ('Comment',)
+            )
+            rules = cur.fetchall()
+
+            def needed_for(lvl: int) -> int:
+                for r in rules:
+                    if r["levelStart"] <= lvl <= r["levelEnd"]:
+                        return r["actionsRequired"]
+                return rules[-1]["actionsRequired"]   # safety fallback
+
+            # 5️⃣  Promote while enough actions are banked
+            while progress >= needed_for(level) and level < 100:
+                progress -= needed_for(level)
+                level    += 1
+
+            # 6️⃣  Persist the new level/progress
+            cur.execute(
+                '''UPDATE "userBadges"
+                SET "currentLevel"   = %s,
+                    "currentProgress" = %s,
+                    "lastUpdated"    = NOW()
+                WHERE id = %s''',
+                (level, progress, ub["id"])
+            )
+            conn.commit()
 
         return jsonify({
             'message': 'Comment added successfully',

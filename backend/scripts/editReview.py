@@ -6,7 +6,7 @@ import os
 import s3Images
 from flask import Blueprint, g, request, jsonify
 from bson.objectid import ObjectId
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from scripts import badge_helpers
 
@@ -34,7 +34,21 @@ def voteReview():
     review_id = data['reviewID']
     user_id = data['userID']
     action = data['action']
-    current_time = data.get('voteDate', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    # current_time = data.get('voteDate', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    # Parse the date string from frontend (ISO format) to the expected format
+    if 'voteDate' in data:
+        try:
+            # Convert ISO format to datetime object
+            vote_datetime = datetime.fromisoformat(data['voteDate'].replace('Z', '+00:00'))
+            print("code is h")
+            # Format to the expected string format
+            current_time = vote_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            print("code is her")
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        print("code is here")
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with conn.cursor() as cur:
         try:
@@ -89,31 +103,153 @@ def voteReview():
                     VALUES (%s, %s, %s);
                 """, (review_id, json.dumps(upvotes), json.dumps(downvotes)))
 
-            # Process badge for upvote if this is a new upvote
-            badge_updates = []
-            if is_new_upvote:
-                badge_updates = badge_helpers.process_badges_for_vote(conn, user_id, review_id, current_time)
+            # # Process badge for upvote if this is a new upvote
+            # badge_updates = []
+            # if is_new_upvote:
+            #     badge_updates = badge_helpers.process_badges_for_vote(conn, user_id, review_id, current_time)
             
-            conn.commit()
+            # conn.commit()
             
-            # Format badge updates for response
-            badge_details = []
-            if badge_updates:
-                for badge_id, old_level, new_level in badge_updates:
-                    cur.execute("""
-                        SELECT "badgeName", "badgePhoto", "badgeDesc", "badgeType", "relatedEntity" 
-                        FROM "badges" 
-                        WHERE id = %s
-                    """, (badge_id,))
-                    badge = cur.fetchone()
-                    if badge:
-                        badge_details.append({
-                            "badgeName": badge['badgeName'],
-                            "badgeType": badge['badgeType'],
-                            "relatedEntity": badge['relatedEntity'],
-                            "oldLevel": old_level,
-                            "newLevel": new_level
-                        })
+            # # Format badge updates for response
+            # badge_details = []
+            # if badge_updates:
+            #     for badge_id, old_level, new_level in badge_updates:
+            #         cur.execute("""
+            #             SELECT "badgeName", "badgePhoto", "badgeDesc", "badgeType", "relatedEntity" 
+            #             FROM "badges" 
+            #             WHERE id = %s
+            #         """, (badge_id,))
+            #         badge = cur.fetchone()
+            #         if badge:
+            #             badge_details.append({
+            #                 "badgeName": badge['badgeName'],
+            #                 "badgeType": badge['badgeType'],
+            #                 "relatedEntity": badge['relatedEntity'],
+            #                 "oldLevel": old_level,
+            #                 "newLevel": new_level
+            #             })
+            cur.execute(
+                'SELECT "userID", "createdDate" FROM "reviews" WHERE id = %s',
+                (review_id,)
+            )
+            review_row = cur.fetchone()
+            if review_row:
+                review_owner_id = review_row["userID"]          # the badge recipient
+                review_created  = review_row["createdDate"]     # datetime from DB
+            else:
+                review_owner_id = None
+                review_created  = None                          # should not happen
+
+            # Convert the supplied vote time into a datetime object
+            upvote_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+
+            # Award badge only if the up-vote is ≤ 7 days after the review date
+            within_one_week = (
+                review_created is not None
+                and (upvote_dt - review_created) <= timedelta(weeks=1)
+            )
+            # Work out whether we just *added* or *removed* an up-vote
+            is_removed_upvote = (
+                action == "unupvote" or
+                (action == "downvote" and 'had_upvote' in locals() and had_upvote)
+            )
+
+            if (is_new_upvote and within_one_week) or is_removed_upvote:
+                # 1️⃣  Get DrinkGPT badge id
+                cur.execute(
+                    'SELECT id FROM "badges" WHERE "relatedEntity" = %s ORDER BY id LIMIT 1',
+                    ('Upvote',)
+                )
+                row = cur.fetchone()
+                if row:
+                    upvote_badge_id = row['id']
+
+                    # 2️⃣  Existing badge row?
+                    cur.execute(
+                        'SELECT id, "currentLevel", "currentProgress" '
+                        'FROM "userBadges" '
+                        'WHERE "userId" = %s AND "badgeId" = %s',
+                        (review_owner_id, upvote_badge_id)
+                    )
+                    ub = cur.fetchone()
+
+                    # 3️⃣  Pull rules once
+                    cur.execute(
+                        'SELECT "levelStart","levelEnd","actionsRequired" '
+                        'FROM "badgeRules" '
+                        'WHERE "actionType" = %s ORDER BY "levelStart"',
+                        ('Upvote',)
+                    )
+                    rules = cur.fetchall()
+
+                    def needed_for(lvl: int) -> int:
+                        for r in rules:
+                            if r["levelStart"] <= lvl <= r["levelEnd"]:
+                                return r["actionsRequired"]
+                        return rules[-1]["actionsRequired"]
+
+                    old_level = ub["currentLevel"] if ub else 0
+                    new_level = old_level
+
+                    # 4️⃣  Apply +1 or -1 change
+                    if is_new_upvote:
+                        if ub is None:
+                            level, progress = 1, 1           # first ever +1
+                            # create row straight away; we’ll update after levelling
+                            cur.execute(
+                                '''INSERT INTO "userBadges"
+                                ("userId","badgeId","currentLevel","currentProgress",
+                                    "dateEarned","lastUpdated")
+                                VALUES (%s,%s,%s,%s,NOW(),NOW())''',
+                                (review_owner_id, upvote_badge_id, level, progress)
+                            )
+                        else:
+                            level    = ub["currentLevel"]
+                            progress = ub["currentProgress"] + 1
+                    else:   # an up-vote was removed
+                        if ub is None:
+                            # User had no badge – nothing to roll back
+                            level = progress = 0
+                        else:
+                            level    = ub["currentLevel"]
+                            progress = ub["currentProgress"] - 1
+
+                    # 5️⃣  Level-up / Level-down math
+                    if ub is not None or is_new_upvote:
+                        # promote while enough progress
+                        while progress >= needed_for(level) and level < 100:
+                            progress -= needed_for(level)
+                            level    += 1
+                        # demote while progress went negative
+                        while progress < 0 and level > 1:
+                            level   -= 1
+                            progress += needed_for(level)
+
+                        # 6️⃣  Delete badge if back to level-1 & no progress
+                        if level == 1 and progress <= 0:
+                            cur.execute(
+                                'DELETE FROM "userBadges" WHERE "userId" = %s AND "badgeId" = %s',
+                                (review_owner_id, upvote_badge_id)
+                            )
+                            new_level = 0
+                        else:
+                            new_level = level
+                            cur.execute(
+                                '''UPDATE "userBadges"
+                                SET "currentLevel"   = %s,
+                                    "currentProgress" = %s,
+                                    "lastUpdated"    = NOW()
+                                WHERE "userId" = %s AND "badgeId" = %s''',
+                                (level, progress, review_owner_id, upvote_badge_id)
+                            )
+
+                    # 7️⃣  Capture change for response
+                    if old_level != new_level:
+                        if "badge_updates" not in locals():
+                            badge_updates = []
+                        badge_updates.append((upvote_badge_id, old_level, new_level))
+
+                conn.commit()
 
             return jsonify({
                 "code": 201,
@@ -121,7 +257,7 @@ def voteReview():
                     "upvotes": upvotes,
                     "downvotes": downvotes
                 },
-                "badgeUpdates": badge_details
+                # "badgeUpdates": badge_details
             }), 201
 
         except Exception as e:

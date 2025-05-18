@@ -187,6 +187,57 @@ def sendQuestions():
         conn.commit()
 
         print(f" {points['proofPoints']} points awarded to user {userID} for asking a question")
+        cur.execute(
+            'SELECT id FROM "badges" '
+            'WHERE "relatedEntity" = %s ORDER BY id LIMIT 1',
+            ('Question',)
+        )
+        row = cur.fetchone()
+        if not row:                              # no badge configured
+            conn.commit()
+            return
+
+        question_badge_id = row['id']
+
+        # 2️⃣  Do we already track this badge for the user?
+        cur.execute(
+            'SELECT id, "currentLevel", "currentProgress" '
+            'FROM "userBadges" '
+            'WHERE "userId" = %s AND "badgeId" = %s',
+            (userID, question_badge_id)
+        )
+        ub = cur.fetchone()
+
+        if ub is None:
+            # First question → badge row with level-1 completed
+            cur.execute(
+                '''INSERT INTO "userBadges"
+                ("userId","badgeId","currentLevel","currentProgress",
+                    "dateEarned","lastUpdated")
+                VALUES (%s,%s,1,0,NOW(),NOW())''',
+                (userID, question_badge_id)
+            )
+            conn.commit()
+            return
+
+        # 3️⃣  Increment progress (every action == level-up)
+        level    = ub["currentLevel"]
+        progress = ub["currentProgress"] + 1      # will be 1
+
+        if progress >= 1 and level < 100:
+            level   += 1
+            progress = 0                          # reset because 1 action spent
+
+        # 4️⃣  Persist
+        cur.execute(
+            '''UPDATE "userBadges"
+            SET "currentLevel"   = %s,
+                "currentProgress" = %s,
+                "lastUpdated"    = NOW()
+            WHERE id = %s''',
+            (level, progress, ub["id"])
+        )
+        conn.commit()
 
         return jsonify(
             {
